@@ -127,7 +127,10 @@ footer{text-align:center;margin-top:34px;color:var(--sub)}
 .dh button:focus-visible,.dh a:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 .dkp main{padding-bottom:300px}
 @media(pointer:fine){.dock,.dock iframe{cursor:auto}.dock a,.dock button{cursor:pointer}}
-.dv{position:absolute;left:0;top:-64px;width:100%;height:calc(100% + 64px);z-index:-1;pointer-events:none}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.dock::before{content:"";position:absolute;inset:-2px;border-radius:20px;padding:3px;pointer-events:none;background:conic-gradient(from var(--ang),transparent 0 55%,#3df0ff 70%,#b84dff 83%,#ff2bd6 95%,transparent 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;filter:drop-shadow(0 0 7px #b84dff) hue-rotate(0deg);animation:orbit 4.5s linear infinite,hue 10s linear infinite}
+@keyframes orbit{to{--ang:360deg}}
+@keyframes hue{to{filter:drop-shadow(0 0 7px #b84dff) hue-rotate(360deg)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="sky d" aria-hidden="true"></div><div class="sky s" aria-hidden="true"></div>
@@ -139,7 +142,7 @@ footer{text-align:center;margin-top:34px;color:var(--sub)}
 <button class="snd" id="snd" aria-pressed="false">Bajo: apagado</button>
 <button class="snd" id="tm">Cielo: auto</button>
 <canvas id="wx" aria-hidden="true"></canvas>
-<div id="dock" class="dock" role="region" aria-label="Reproductor de Spotify"><canvas id="dv" class="dv" aria-hidden="true"></canvas><div class="dh"><b id="dtt">Playlist</b><a id="dlk" href="#" target="_blank" rel="noopener">Abrir en Spotify</a><button id="dex" type="button">Ampliar</button><button id="dcl" type="button" aria-label="Cerrar reproductor">✕</button></div><iframe id="dfr" title="Reproductor de Spotify" width="100%" height="152" style="border:0;border-radius:12px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
+<div id="dock" class="dock" role="region" aria-label="Reproductor de Spotify"><div class="dh"><b id="dtt">Playlist</b><a id="dlk" href="#" target="_blank" rel="noopener">Abrir en Spotify</a><button id="dex" type="button">Ampliar</button><button id="dcl" type="button" aria-label="Cerrar reproductor">✕</button></div><iframe id="dfr" title="Reproductor de Spotify" width="100%" height="152" style="border:0;border-radius:12px" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe></div>
 <div class="smoke" aria-hidden="true"><i></i><i></i><i></i></div>
 <div class="lasers" aria-hidden="true"><b></b><b></b><b></b></div>
 <div id="cur" aria-hidden="true"></div><div id="dot" aria-hidden="true"></div>
@@ -240,19 +243,9 @@ requestAnimationFrame(wl);
 const dk=document.getElementById('dock'),df=document.getElementById('dfr'),dt=document.getElementById('dtt'),dlk=document.getElementById('dlk'),dex=document.getElementById('dex');let big=false;
 function openDock(c){const u=c.dataset.u,id=(u.match(/playlist\/([A-Za-z0-9]+)/)||[])[1];if(!id){open(u,'_blank');return}
 if(df.dataset.id!==id){df.src='https://open.spotify.com/embed/playlist/'+id+'?utm_source=generator&theme=0';df.dataset.id=id}
-dt.textContent=c.querySelector('.lab').textContent.replace('▶','').trim();dlk.href=c.dataset.u;dk.classList.add('on');document.body.classList.add('dkp');if(!vr&&!RM)vr=requestAnimationFrame(vis)}
+dt.textContent=c.querySelector('.lab').textContent.replace('▶','').trim();dlk.href=c.dataset.u;dk.classList.add('on');document.body.classList.add('dkp')}
 document.querySelectorAll('.card').forEach(c=>{c.dataset.u=c.href;c.removeAttribute('href');c.removeAttribute('target');c.setAttribute('role','button');c.tabIndex=0;c.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openDock(c)}})});
 document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',e=>{e.preventDefault();openDock(c)}));
-const dv=document.getElementById('dv'),dc=dv.getContext('2d');let vr=0;
-if(window.ResizeObserver)new ResizeObserver(()=>{const d=devicePixelRatio||1;dv.width=dv.offsetWidth*d;dv.height=dv.offsetHeight*d}).observe(dk);
-function vis(t){if(!dk.classList.contains('on')){vr=0;return}vr=requestAnimationFrame(vis);
-const d=devicePixelRatio||1,w=dv.width,h=dv.height,top=64*d,n=Math.max(2,Math.floor(w/(8*d))),bw=w/n*.6,P=window.PAL||['#b84dff','#ff2bd6','#3df0ff'];
-const kick=Math.pow(Math.max(0,Math.cos(t/1000*(100/60)*Math.PI*2)),6),pu=Math.max(kick,Math.min(1,window.bass||0));
-dc.clearRect(0,0,w,h);const g=dc.createLinearGradient(0,0,w,0);g.addColorStop(0,P[2]);g.addColorStop(.5,P[0]);g.addColorStop(1,P[1]);
-dc.fillStyle=g;dc.shadowColor=P[0];dc.shadowBlur=10*d;
-for(let i=0;i<n;i++){const u=i/(n-1),e=.55+.45*Math.sin(u*Math.PI),a=(Math.sin(t/190+i*.55)+Math.sin(t/330+i*.21)+2)/4,bh=a*(.3+.7*pu)*e*top*.95+2*d,x=i*(w-bw)/(n-1);
-dc.globalAlpha=.95;dc.fillRect(x,top-bh,bw,bh);dc.globalAlpha=.22;dc.fillRect(x,top,bw,Math.min(bh*.9,h-top))}
-dc.globalAlpha=1;dc.shadowBlur=0}
 dex.onclick=()=>{big=!big;df.height=big?352:152;dex.textContent=big?'Reducir':'Ampliar'};
 document.getElementById('dcl').onclick=()=>{dk.classList.remove('on');document.body.classList.remove('dkp');df.src='about:blank';df.dataset.id=''};
 dk.addEventListener('pointerenter',()=>{const r=document.getElementById('cur');if(r)r.style.opacity=0});
